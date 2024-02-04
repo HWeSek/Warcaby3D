@@ -14,6 +14,11 @@ export default class Camera {
         window.addEventListener('resize', () => this.updateSize(renderer), false);
     }
 
+    changePosition(x, y, z) {
+        this.threeCamera.position.set(x, y, z);
+        this.threeCamera.lookAt(new Vector3(0, 0, 0))
+    }
+
     updateSize(renderer) {
 
         this.threeCamera.aspect = renderer.domElement.width / renderer.domElement.height;

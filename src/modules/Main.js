@@ -43,7 +43,15 @@ const pionki = [
 
 const Game = {
     setPlayer(side) {
-
+        console.log(side);
+        switch (side) {
+            case "white":
+                camera.changePosition(-250, 250, 0)
+                break;
+            case "black":
+                camera.changePosition(250, 250, 0)
+                break;
+        }
     },
     drawTiles() {
         for (let i in szachownica) {
