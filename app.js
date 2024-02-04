@@ -14,6 +14,7 @@ let active_players = [];
 
 app.post('/', (req, res) => {
     let response = "error!";
+    let isValid = false;
     let side;
     if (req.body.nick != undefined) {
         let player = req.body.nick;
@@ -21,9 +22,11 @@ app.post('/', (req, res) => {
         if (active_players.length < 2) {
             if (active_players.includes(player)) {
                 response = "Już jest taki gracz!";
+                isValid = false;
             } else {
                 active_players.push(player);
-                response = `Witaj ${player}!`
+                response = `Witaj ${player}!`;
+                isValid = true;
                 if (active_players.length == 1) {
                     side = "white";
                 } else if (active_players.length == 1) {
@@ -32,12 +35,14 @@ app.post('/', (req, res) => {
             }
         } else {
             console.log("error serwera!");
+            response = "Gra w toku!";
+            isValid = false;
         }
 
         console.log(active_players);
     }
     res.header("application/json");
-    res.send({ response: response, players: active_players, side: side });
+    res.send({ response: response, players: active_players, side: side, validator: isValid });
 })
 
 app.post('/resetUsers', (req, res) => {
