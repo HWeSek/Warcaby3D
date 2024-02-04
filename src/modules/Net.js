@@ -6,16 +6,30 @@ const allNetFunctions = {
         const options = {
             method: "POST",
             headers: {
-                "Content-Type": "text/plain"
+                "Content-Type": "application/json"
             },
-            body: userName
+            body: JSON.stringify({ nick: userName })
         }
         fetch("/", options)
-            .then(response => response.text())
+            .then(response => response.json())
             .then(data => {
-                console.log(data);
-                document.querySelector('nav').innerText = data;
+                /////////////TU SIE WSZYSTKO DZIEJE!
+                document.querySelector('nav').innerText = data.response;
                 document.getElementById('login').close();
+                document.getElementById('waiting_room').style.display = 'block';
+
+                let server_check = setInterval(() => {
+                    fetch('/', { method: "POST", headers: { "Content-Type": "application/json" } })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.players.length == 2) {
+                                document.getElementById('waiting_room').style.display = 'none';
+                                document.querySelector('nav').innerText = `Mecz: ${data.players[0]} vs ${data.players[1]}`;
+                                clearInterval(server_check);
+                            }
+                        })
+                        .catch(error => console.log(error));
+                }, 1000)
             })
             .catch(error => console.log(error));
     },

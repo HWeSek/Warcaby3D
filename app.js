@@ -14,8 +14,8 @@ let active_players = [];
 
 app.post('/', (req, res) => {
     let response = "error!";
-    if (req.body != undefined) {
-        let player = req.body;
+    if (req.body.nick != undefined) {
+        let player = req.body.nick;
         console.log(player);
         if (active_players.length < 2) {
             if (active_players.includes(player)) {
@@ -30,8 +30,8 @@ app.post('/', (req, res) => {
 
         console.log(active_players);
     }
-    res.header("plain/text");
-    res.send(response);
+    res.header("application/json");
+    res.send({ response: response, players: active_players });
 })
 
 app.post('/resetUsers', (req, res) => {
