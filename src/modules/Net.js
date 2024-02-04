@@ -17,6 +17,7 @@ const allNetFunctions = {
                 document.querySelector('nav').innerText = data.response;
                 document.getElementById('login').close();
                 document.getElementById('waiting_room').style.display = 'block';
+                Game.setPlayer(data.side)
 
                 let server_check = setInterval(() => {
                     fetch('/', { method: "POST", headers: { "Content-Type": "application/json" } })

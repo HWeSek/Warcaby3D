@@ -14,6 +14,7 @@ let active_players = [];
 
 app.post('/', (req, res) => {
     let response = "error!";
+    let side;
     if (req.body.nick != undefined) {
         let player = req.body.nick;
         console.log(player);
@@ -23,6 +24,11 @@ app.post('/', (req, res) => {
             } else {
                 active_players.push(player);
                 response = `Witaj ${player}!`
+                if (active_players.length == 1) {
+                    side = "white";
+                } else if (active_players.length == 1) {
+                    side = "black";
+                }
             }
         } else {
             console.log("error serwera!");
@@ -31,7 +37,7 @@ app.post('/', (req, res) => {
         console.log(active_players);
     }
     res.header("application/json");
-    res.send({ response: response, players: active_players });
+    res.send({ response: response, players: active_players, side: side });
 })
 
 app.post('/resetUsers', (req, res) => {
