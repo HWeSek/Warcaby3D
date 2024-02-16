@@ -21,20 +21,20 @@ const allNetFunctions = {
                     Game.setPlayer(data.side)
 
                     let server_check = setInterval(() => {
-                        this.serverCheck();
+                        this.serverCheck(server_check);
                     }, 1000)
                 }
             })
             .catch(error => console.log(error));
     },
-    serverCheck() {
+    serverCheck(intervalName) {
         fetch('/', { method: "POST", headers: { "Content-Type": "application/json" } })
             .then(response => response.json())
             .then(data => {
                 if (data.players.length == 2) {
                     document.getElementById('waiting_room').style.display = 'none';
                     document.querySelector('nav').innerText = `Mecz: ${data.players[0]} vs ${data.players[1]}`;
-                    clearInterval(server_check);
+                    clearInterval(intervalName);
                 }
             })
             .catch(error => console.log(error));
