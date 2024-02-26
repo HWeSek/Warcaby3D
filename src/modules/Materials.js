@@ -9,4 +9,5 @@ export const materials = {
     black_pawn: new MeshMatcapMaterial({ map: new TextureLoader().load(b_pawn), side: DoubleSide }),
     white_pawn: new MeshMatcapMaterial({ map: new TextureLoader().load(w_pawn), side: DoubleSide }),
     selected_pawn: new MeshMatcapMaterial({ color: 0x37de64, side: DoubleSide }),
+    tile_choice: new MeshMatcapMaterial({ color: 0xe6e600, side: DoubleSide }),
 }

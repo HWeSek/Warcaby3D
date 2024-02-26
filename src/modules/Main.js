@@ -41,6 +41,9 @@ const pionki = [
     [0, 2, 0, 2, 0, 2, 0, 2],
 ];
 
+let pawn_object_list = [];
+let tile_object_list = [];
+
 const raycaster = new Raycaster();
 const mouseVector = new Vector2()
 let intersects = 0;
@@ -54,10 +57,9 @@ function toggleRaycaster(onof) {
             intersects = raycaster.intersectObjects(scene.children);
         })
     } else {
-        window.removeEventListener('click');
+        window.removeEventListener('mousedown');
     }
 }
-
 
 const Game = {
     setPlayer(side) {
@@ -81,6 +83,7 @@ const Game = {
                     tile = new Tile(materials.black_tile, szachownica[i][j], { x: j, y: i })
                 }
                 tile.position.set((i - 3.5) * 50, 0, (j - 3.5) * 50);
+                tile_object_list.push(tile);
                 scene.add(tile);
             }
         }
@@ -96,28 +99,39 @@ const Game = {
                         pawn = new Pawn(materials.black_pawn, pionki[i][j], { x: j, y: i })
                     }
                     pawn.position.set((i - 3.5) * 50, 20, (j - 3.5) * 50);
+                    pawn_object_list.push(pawn);
                     scene.add(pawn);
                 }
             }
         }
     },
-    movePawn() {
+    render() {
         toggleRaycaster(true)
         if (intersects.length > 0) {
-            if (intersects[0].object.isPawn) {
-                intersects[0].object.material = materials.selected_pawn;
-                toggleRaycaster(false)
-            }
-        }
-    }
-    ,
-    render() {
-        if (intersects.length > 0) {
-            if (intersects[0].object.isPawn) {
-                intersects[0].object.material = materials.selected_pawn;
-            }
-        }
+            if (intersects[0].object.isPawn && intersects[0].object.color == 1) {
+                let cords = intersects[0].object.cord;
+                pawn_object_list.forEach((pawn) => {
+                    if (pawn.color == 1) { pawn.material = materials.white_pawn } else { pawn.material = materials.black_pawn }
+                    tile_object_list.forEach((tile) => {
+                        if (tile.color == 0) { tile.material = materials.black_tile }
 
+                    })
+
+                })
+                intersects[0].object.material = materials.selected_pawn;
+                console.log(cords);
+                tile_object_list.forEach((tile) => {
+                    if (tile.cord.x == cords.x && tile.cord.y == cords.y) {
+                        console.log('dupa');
+                        tile.material = materials.tile_choice;
+                    }
+                })
+
+                //console.log(cords);
+                intersects = 0;
+
+            }
+        }
         renderer.render(scene, camera.threeCamera);
         requestAnimationFrame(Game.render);
     }

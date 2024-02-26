@@ -7,5 +7,6 @@ export class Tile extends Mesh {
         this.material = material;
         this.geometry = new BoxGeometry(50, 20, 50);
         this.cord = position;
+        this.isTile = true;
     }
 }
