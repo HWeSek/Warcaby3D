@@ -69,6 +69,7 @@ const Game = {
     playerSide: undefined,
     context: undefined,
     pawn_direction: undefined,
+    pawn_tween: undefined,
     setPlayer(side) {
         console.log(side);
         switch (side) {
@@ -180,10 +181,27 @@ const Game = {
                 Game.options = [];
                 //console.log([p_x, p_y], [t_x, t_y]);
                 Game.selected_pawn.material = Game.selected_pawn.default_material
+                console.log(Game.selected_pawn.position)
+                Game.pawn_tween = new Tween(Game.selected_pawn.position)
+                   .to({x: ((t_y - 3.5) * 50), z: ((t_x - 3.5) * 50)}, 1000)
+                   .easing(Easing.Quadratic.InOut)
+                   .onUpdate((coords)=>{
+                       Game.selected_pawn.position.x = coords.x
+                       Game.selected_pawn.position.y = coords.y
+                       console.log(coords);
+                   })
+                   .onComplete(() => { console.log("koniec animacji") }) 
+                   .start()
                 Game.selected_pawn.position.set((t_y - 3.5) * 50, 20, (t_x - 3.5) * 50)
-                Game.selected_pawn.cord = { x: parseInt(t_x), y: parseInt(t_y) }
+                Game.selected_pawn.cord = { x: parseInt(t_x), y: parseInt(t_y) }        
             }
         }
+        try {
+            Game.pawn_tween.update()
+        } catch (error) {
+            
+        }
+
         renderer.render(scene, camera.threeCamera);
         requestAnimationFrame(Game.render);
     }
