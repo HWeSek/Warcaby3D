@@ -29,7 +29,7 @@ app.post('/', (req, res) => {
                 isValid = true;
                 if (active_players.length == 1) {
                     side = "white";
-                } else if (active_players.length == 1) {
+                } else if (active_players.length == 2) {
                     side = "black";
                 }
             }
