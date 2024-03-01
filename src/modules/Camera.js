@@ -18,6 +18,9 @@ export default class Camera {
         this.threeCamera.position.set(x, y, z);
         this.threeCamera.lookAt(new Vector3(0, 0, 0))
     }
+    look_at(obj){
+        this.threeCamera.lookAt(obj);
+    }
 
     updateSize(renderer) {
 

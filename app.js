@@ -52,6 +52,7 @@ app.post('/resetUsers', (req, res) => {
 })
 
 app.use(express.static('dist'))
+app.use(express.static('public'))
 app.listen(PORT, function () {
     console.log('Serwer dziala na porcie ', PORT);
 });

@@ -1,4 +1,5 @@
 import { Scene, AxesHelper, Color, AmbientLight, Raycaster, Vector2 } from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { Tween, Easing } from '@tweenjs/tween.js';
 import Renderer from './renderer';
 import Camera from './camera';
@@ -17,6 +18,17 @@ const camera = new Camera(renderer.threeRenderer)
 const light = new AmbientLight(0xffffff, 2);
 scene.add(light);
 light.position.set(0, 200, 0);
+
+///////////////////FUNNY???///////////
+var Tewi;
+const gltfLoader = new GLTFLoader();
+gltfLoader.load('./inaba_tewi_fumo_from_touhou_project/scene.gltf', (gltfScene)=>{
+    gltfScene.scene.scale.set(400,400,400)
+    gltfScene.scene.position.set(0,40,0)
+    camera.look_at(gltfScene.scene)
+    scene.add(gltfScene.scene);
+    Tewi = gltfScene
+})
 
 ///////////////////////////////
 const szachownica = [
@@ -201,7 +213,7 @@ const Game = {
         } catch (error) {
             
         }
-
+        if(Tewi){Tewi.scene.rotation.y += 0.05; console.log('usa tei');}
         renderer.render(scene, camera.threeCamera);
         requestAnimationFrame(Game.render);
     }
