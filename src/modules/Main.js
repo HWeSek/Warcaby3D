@@ -6,6 +6,7 @@ import Camera from './camera';
 import { materials } from './Materials';
 import { Tile } from './Tile';
 import { Pawn } from './Pawn';
+import { allNetFunctions } from './Net';
 
 const container = document.getElementById('root')
 const scene = new Scene()
@@ -127,6 +128,25 @@ const Game = {
             }
         }
     },
+    pawnMovement(object, destination){
+        console.log(object, destination);
+        object.material = object.default_material
+        let t_y = parseInt(destination.y)
+        let t_x = parseInt(destination.x)
+        Game.pawn_tween = new Tween(object.position)
+           .to({x: ((t_y - 3.5) * 50), z: ((t_x - 3.5) * 50)}, 1000)
+           .easing(Easing.Quadratic.InOut)
+           .onUpdate((coords)=>{
+               object.position.x = coords.x
+               object.position.y = coords.y
+               console.log(coords);
+           })
+           .onComplete(() => {  }) 
+           .start()
+        //Game.selected_pawn.position.set((t_y - 3.5) * 50, 20, (t_x - 3.5) * 50)
+        object.cord = { x: parseInt(t_x), y: parseInt(t_y) }    
+    }
+    ,
     render() {
         switch (Game.playerSide) {
             case "white":
@@ -181,31 +201,21 @@ const Game = {
         }
         if (intersects.length > 0) {
             if (Game.options.includes(intersects[0].object)) {
-                //console.log('ruch');
+                console.log('ruch');
                 Game.options.forEach((tile) => {
                     tile.material = tile.default_material;
                 })
+                Game.options = [];
+                /////////////////////////////////////
                 let p_x = Game.selected_pawn.cord.x
                 let p_y = Game.selected_pawn.cord.y
 
                 let t_x = intersects[0].object.cord.x
-                let t_y = intersects[0].object.cord.y
-                Game.options = [];
-                //console.log([p_x, p_y], [t_x, t_y]);
-                Game.selected_pawn.material = Game.selected_pawn.default_material
-                console.log(Game.selected_pawn.position)
-                Game.pawn_tween = new Tween(Game.selected_pawn.position)
-                   .to({x: ((t_y - 3.5) * 50), z: ((t_x - 3.5) * 50)}, 1000)
-                   .easing(Easing.Quadratic.InOut)
-                   .onUpdate((coords)=>{
-                       Game.selected_pawn.position.x = coords.x
-                       Game.selected_pawn.position.y = coords.y
-                       console.log(coords);
-                   })
-                   .onComplete(() => { console.log("koniec animacji") }) 
-                   .start()
-                Game.selected_pawn.position.set((t_y - 3.5) * 50, 20, (t_x - 3.5) * 50)
-                Game.selected_pawn.cord = { x: parseInt(t_x), y: parseInt(t_y) }        
+                let t_y = intersects[0].object.cord.y    
+
+                /////NET 
+
+                allNetFunctions.movePawn(Game.selected_pawn, {x: t_x, y: t_y});
             }
         }
         try {
@@ -213,7 +223,7 @@ const Game = {
         } catch (error) {
             
         }
-        if(Tewi){Tewi.scene.rotation.y += 0.05; console.log('usa tei');}
+        if(Tewi){Tewi.scene.rotation.y += 0.05;}
         renderer.render(scene, camera.threeCamera);
         requestAnimationFrame(Game.render);
     }

@@ -1,5 +1,10 @@
 import { Game } from "./Main";
+import { io } from "https://cdn.socket.io/4.6.0/socket.io.esm.min.js";
 
+const client = io("ws://localhost:3000")
+client.on('pawn_movement_data', (data)=> {
+    Game.pawnMovement(data.object, data.destination);
+})
 const allNetFunctions = {
 
     loginUser(userName) {
@@ -50,6 +55,9 @@ const allNetFunctions = {
                 // działania po resecie
             })
             .catch(error => console.log(error));
+    },
+    movePawn(object, destination){
+        client.emit('pawn_movement_data', {object: object, destination: destination});
     }
 }
 
