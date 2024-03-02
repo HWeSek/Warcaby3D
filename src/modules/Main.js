@@ -55,20 +55,12 @@ let tile_object_list = [];
 const raycaster = new Raycaster();
 const mouseVector = new Vector2()
 let intersects = 0;
-
-function toggleRaycaster(onof) {
-    if (onof) {
-        window.addEventListener('mousedown', (e) => {
-            mouseVector.x = (e.clientX / window.innerWidth) * 2 - 1;
-            mouseVector.y = -(e.clientY / window.innerHeight) * 2 + 1;
-            raycaster.setFromCamera(mouseVector, camera.threeCamera);
-            intersects = raycaster.intersectObjects(scene.children);
-        })
-    } else {
-        window.removeEventListener('mousedown');
-    }
+function rayFunc(e){
+    mouseVector.x = (e.clientX / window.innerWidth) * 2 - 1;
+    mouseVector.y = -(e.clientY / window.innerHeight) * 2 + 1;
+    raycaster.setFromCamera(mouseVector, camera.threeCamera);
+    intersects = raycaster.intersectObjects(scene.children);
 }
-toggleRaycaster(true)
 
 const Game = {
     options: [],
@@ -77,6 +69,16 @@ const Game = {
     context: undefined,
     pawn_direction: undefined,
     pawn_tween: undefined,
+    white_pawns: 8,
+    black_pawns: 8,
+    round: undefined,
+    toggleRaycaster(onof) {
+        if (onof) {
+            window.addEventListener('mousedown', rayFunc)
+        } else {
+            window.removeEventListener('mousedown', rayFunc);
+        }
+    },
     setPlayer(side) {
         console.log(side);
         switch (side) {
@@ -91,7 +93,7 @@ const Game = {
         }
         gltfLoader.load('./inaba_tewi_fumo_from_touhou_project/scene.gltf', (gltfScene)=>{
             gltfScene.scene.scale.set(400,400,400)
-            gltfScene.scene.position.set(0,40,0)
+            gltfScene.scene.position.set(-400,20,0)
             scene.add(gltfScene.scene);
             Tewi = gltfScene
         })
@@ -128,8 +130,8 @@ const Game = {
             }
         }
     },
-    pawnMovement(object, destination){
-        console.log(object, destination);
+    pawnMovement(id, destination){
+        let object = scene.getObjectById(id)
         object.material = object.default_material
         let t_y = parseInt(destination.y)
         let t_x = parseInt(destination.x)
@@ -139,7 +141,7 @@ const Game = {
            .onUpdate((coords)=>{
                object.position.x = coords.x
                object.position.y = coords.y
-               console.log(coords);
+               //console.log(coords);
            })
            .onComplete(() => {  }) 
            .start()
@@ -214,8 +216,7 @@ const Game = {
                 let t_y = intersects[0].object.cord.y    
 
                 /////NET 
-
-                allNetFunctions.movePawn(Game.selected_pawn, {x: t_x, y: t_y});
+                allNetFunctions.movePawn(Game.selected_pawn.id, {x: t_x, y: t_y});
             }
         }
         try {

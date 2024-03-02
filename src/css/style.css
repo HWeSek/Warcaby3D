@@ -63,3 +63,8 @@ nav {
     text-align: center;
     padding-top: 30px;
 }
+
+#timer {
+    width: 180px;
+    float: right;
+}
