@@ -69,6 +69,7 @@ const Game = {
     context: undefined,
     pawn_direction: undefined,
     pawn_tween: undefined,
+    death_tween: undefined,
     white_pawns: 8,
     black_pawns: 8,
     round: undefined,
@@ -93,7 +94,7 @@ const Game = {
         }
         gltfLoader.load('./inaba_tewi_fumo_from_touhou_project/scene.gltf', (gltfScene)=>{
             gltfScene.scene.scale.set(400,400,400)
-            gltfScene.scene.position.set(-400,20,0)
+            gltfScene.scene.position.set(0,20,-350)
             scene.add(gltfScene.scene);
             Tewi = gltfScene
         })
@@ -147,6 +148,31 @@ const Game = {
            .start()
         //Game.selected_pawn.position.set((t_y - 3.5) * 50, 20, (t_x - 3.5) * 50)
         object.cord = { x: parseInt(t_x), y: parseInt(t_y) }    
+    },
+    pawnDeath(id, type){
+        let object = scene.getObjectById(id)
+        object.material = object.default_material
+        Game.death_tween = new Tween(object.position)
+           .to({y: -30}, 800)
+           .easing(Easing.Quadratic.InOut)
+           .onUpdate((coords)=>{
+               object.position.x = coords.x
+               object.position.y = coords.y
+               object.rotate.z += 0.1;
+               //console.log(coords);
+           })
+           .onComplete(() => { 
+                object.remove(); 
+            }) 
+           .start()  
+        object.cord = { x: parseInt(-10), y: parseInt(-10) }    
+        pawn_object_list.forEach((pawn)=>{console.log(pawn);})
+        console.log(type);
+        if(String(type) == "1"){
+            Game.white_pawns --;
+        }else if(String(type) == "2"){
+            Game.black_pawns --;
+        }
     }
     ,
     render() {
@@ -179,20 +205,40 @@ const Game = {
                 tile_object_list.forEach((tile) => {
 
                     if ((tile.cord.x == cords.x + 1 && tile.cord.y == cords.y + Game.pawn_direction) || (tile.cord.x == cords.x - 1 && tile.cord.y == cords.y + Game.pawn_direction)) {
+                        let attack_dir;
+                        if((tile.cord.x == cords.x + 1 && tile.cord.y == cords.y + Game.pawn_direction))
+                        {attack_dir = 1}
+                        else {
+                            attack_dir = -1;
+                        } 
                         let placement = true;
+                        let seleceted_tile = tile;
                         pawn_object_list.forEach((pawn) => {
                             if ((tile.cord.x == pawn.cord.x && tile.cord.y == pawn.cord.y)) {
                                 if (pawn.color == Game.context[0]) {
                                     placement = false;
-                                    console.log('nie ma');
+                                    //console.log('nie ma');
                                 } else if (pawn.color == Game.context[1]) {
-                                    console.log('tutaj będzie bicie');
+                                    //console.log('tutaj będzie bicie');
+                                    placement = false;
+                                    console.log(tile.cord);
+                                    console.log({x: tile.cord.x+attack_dir, y: tile.cord.y + Game.pawn_direction});
+                                    tile_object_list.forEach((tile_2)=>{
+                                        if(tile_2.cord.x == tile.cord.x+attack_dir && tile_2.cord.y == tile.cord.y + Game.pawn_direction)
+                                            {seleceted_tile = tile_2; placement = true}
+                                    })
+                                    pawn_object_list.forEach((pawn_2)=>{
+                                        if(pawn_2.cord.x == tile.cord.x+attack_dir && pawn_2.cord.y == tile.cord.y + Game.pawn_direction){
+                                            placement = false;
+                                        }
+                                    })
+                                    console.log(seleceted_tile);
                                 }
                             }
                         })
                         if (placement) {
-                            tile.material = materials.tile_choice;
-                            Game.options.push(tile);
+                            seleceted_tile.material = materials.tile_choice;
+                            Game.options.push(seleceted_tile);
                             //console.log(Game.options, tile);
                         }
 
@@ -216,14 +262,38 @@ const Game = {
                 let t_y = intersects[0].object.cord.y    
 
                 /////NET 
+                /////RUCH PIONKA
                 allNetFunctions.movePawn(Game.selected_pawn.id, {x: t_x, y: t_y});
+                ///ZABICIE PIONKA
+                if(Math.abs(intersects[0].object.cord.x - Game.selected_pawn.cord.x) == 2 && Math.abs(intersects[0].object.cord.y - Game.selected_pawn.cord.y) == 2){
+                    pawn_object_list.forEach((pawn_2)=>{
+                        if (pawn_2.cord.x == (intersects[0].object.cord.x + Game.selected_pawn.cord.x)/2 && pawn_2.cord.y == (intersects[0].object.cord.y + Game.selected_pawn.cord.y)/2 )
+                            allNetFunctions.killPawn(pawn_2.id, pawn_2.color)
+                    })
+                }
             }
         }
         try {
             Game.pawn_tween.update()
-        } catch (error) {
-            
+            Game.death_tween.update()
+        } catch (error) {    
         }
+
+        if(Game.white_pawns == 0){
+            console.log('białe przegrywają');
+            Game.toggleRaycaster(false)
+            document.getElementById('end_screen').innerText = "Czarne wygrały!"
+            document.getElementById('end_screen').style.display = "block";
+            document.getElementById('timer').style.display = "none";
+        }
+        if(Game.black_pawns == 0){
+            console.log('czarne przegrywają');
+            Game.toggleRaycaster(false)
+            document.getElementById('end_screen').innerText = "Białe wygrały!"
+            document.getElementById('end_screen').style.display = "block";
+            document.getElementById('timer').style.display = "none";
+        }
+
         if(Tewi){Tewi.scene.rotation.y += 0.05;}
         renderer.render(scene, camera.threeCamera);
         requestAnimationFrame(Game.render);

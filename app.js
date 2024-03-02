@@ -35,11 +35,12 @@ socketio.on('connection', (client) => {
         })
         let round_interval = setInterval(()=>{
             let time_now = Date.now()
+            console.log(time_now-time_start);
             if ((time_now-time_start) < 30000){
                 move_allowed = true;
             } else {
                 time_start = Date.now()
-                //console.log(move_allowed);
+                console.log(move_allowed);
                 move_allowed = false;
                 round_flag = round_flag == 'white' ? 'black':'white';
                 time_start = Date.now()
@@ -49,6 +50,10 @@ socketio.on('connection', (client) => {
             }   
                 
         },2)
+        /////////////////PAWN DEATH
+        client.on('pawn_death_data', (data)=>{
+            socketio.emit('pawn_death_data', data)
+        })
 })
 });
 

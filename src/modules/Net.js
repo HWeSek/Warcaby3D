@@ -5,11 +5,15 @@ let round_interval;
 
 const client = io("ws://localhost:3000")
 client.on('pawn_movement_data', (data)=> {
-    console.log(data.id, data.destination);
     Game.pawnMovement(data.id, data.destination);
 })
 
+client.on('pawn_death_data', (data)=> {
+    Game.pawnDeath(data.id, data.color);
+})
+
 client.on('game_status_change', (data)=>{
+    console.log(Game.black_pawns,Game.white_pawns);
     clearInterval(round_interval)
     Game.toggleRaycaster(false)
     console.log(data, Game.playerSide);
@@ -80,7 +84,11 @@ const allNetFunctions = {
     movePawn(id, destination){
         client.emit('pawn_movement_data', {id: id, destination: destination});
         Game.toggleRaycaster(false);
+    },
+    killPawn(id, color){
+        client.emit('pawn_death_data', {id: id, color: color});
     }
+
 }
 
 export { allNetFunctions }

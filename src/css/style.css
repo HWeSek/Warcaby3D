@@ -76,6 +76,19 @@ nav {
     text-align: center;
     padding-top: 30px;
 }
+#end_screen {
+    display: none;
+    width: 500px;
+    height: 150px;
+    border: 3px rgb(221, 192, 28) solid;
+    border-radius: 25px;
+    background-color: rgba(245, 233, 65);
+    position: absolute;
+    top: 300px;
+    left: calc(50vw - 200px);
+    text-align: center;
+    padding-top: 30px;
+}
 
 #timer {
     width: 180px;
