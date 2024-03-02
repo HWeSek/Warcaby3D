@@ -22,13 +22,7 @@ light.position.set(0, 200, 0);
 ///////////////////FUNNY???///////////
 var Tewi;
 const gltfLoader = new GLTFLoader();
-gltfLoader.load('./inaba_tewi_fumo_from_touhou_project/scene.gltf', (gltfScene)=>{
-    gltfScene.scene.scale.set(400,400,400)
-    gltfScene.scene.position.set(0,40,0)
-    camera.look_at(gltfScene.scene)
-    scene.add(gltfScene.scene);
-    Tewi = gltfScene
-})
+
 
 ///////////////////////////////
 const szachownica = [
@@ -94,6 +88,12 @@ const Game = {
                 Game.playerSide = "black";
                 break;
         }
+        gltfLoader.load('./inaba_tewi_fumo_from_touhou_project/scene.gltf', (gltfScene)=>{
+            gltfScene.scene.scale.set(400,400,400)
+            gltfScene.scene.position.set(0,40,0)
+            scene.add(gltfScene.scene);
+            Tewi = gltfScene
+        })
     },
     drawTiles() {
         for (let i in szachownica) {
