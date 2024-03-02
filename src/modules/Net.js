@@ -1,6 +1,8 @@
 import { Game } from "./Main";
 import { io } from "https://cdn.socket.io/4.6.0/socket.io.esm.min.js";
 
+let round_interval;
+
 const client = io("ws://localhost:3000")
 client.on('pawn_movement_data', (data)=> {
     console.log(data.id, data.destination);
@@ -8,15 +10,19 @@ client.on('pawn_movement_data', (data)=> {
 })
 
 client.on('game_status_change', (data)=>{
+    clearInterval(round_interval)
     Game.toggleRaycaster(false)
     console.log(data, Game.playerSide);
     if(Game.playerSide == data.round_flag){
         Game.toggleRaycaster(true)
+        document.getElementById('oponent_turn').style.display = 'none';
+    } else {
+        document.getElementById('oponent_turn').style.display = 'block';
     }
-    let round_interval = setInterval(()=>{
+    round_interval = setInterval(()=>{
        let timer_value = (30000 - ( Date.now() - parseFloat(data.time_start)))/1000
        document.getElementById('time_left').innerText = timer_value.toFixed(2);
-    },250)
+    },50)
 })
 
 const allNetFunctions = {

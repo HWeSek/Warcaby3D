@@ -38,15 +38,14 @@ socketio.on('connection', (client) => {
             if ((time_now-time_start) < 30000){
                 move_allowed = true;
             } else {
-                console.log(move_allowed);
+                time_start = Date.now()
+                //console.log(move_allowed);
                 move_allowed = false;
                 round_flag = round_flag == 'white' ? 'black':'white';
-                setTimeout(()=>{
-                    time_start = Date.now()
-                    socketio.emit('game_status_change', {round_flag: round_flag, time_start: time_start})
-                    move_allowed = true;
-                    clearInterval(round_interval)
-                }, 1250)
+                time_start = Date.now()
+                socketio.emit('game_status_change', {round_flag: round_flag, time_start: time_start})
+                move_allowed = true;
+                clearInterval(round_interval)
             }   
                 
         },2)
