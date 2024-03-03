@@ -16,7 +16,7 @@ const camera = new Camera(renderer.threeRenderer)
 //const axes = new AxesHelper(1000);
 //scene.add(axes)
 
-const light = new PointLight(0xffffff, 200000);
+const light = new PointLight(0xffffff, 300000);
 scene.add(light);
 light.castShadow = true;
 light.position.set(0, 400, 0);
