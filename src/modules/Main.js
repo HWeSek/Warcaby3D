@@ -1,4 +1,4 @@
-import { Scene, AxesHelper, Color, AmbientLight, Raycaster, Vector2 } from 'three';
+import { Scene, AxesHelper, Color, PointLight, Raycaster, Vector2 } from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { Tween, Easing } from '@tweenjs/tween.js';
 import Renderer from './renderer';
@@ -16,9 +16,14 @@ const camera = new Camera(renderer.threeRenderer)
 //const axes = new AxesHelper(1000);
 //scene.add(axes)
 
-const light = new AmbientLight(0xffffff, 2);
+const light = new PointLight(0xffffff, 200000);
 scene.add(light);
-light.position.set(0, 200, 0);
+light.castShadow = true;
+light.position.set(0, 400, 0);
+light.shadow.mapSize.width = 2048;
+light.shadow.mapSize.height = 2048;
+light.shadow.radius = 8;
+light.shadow.bias = -0.003;
 
 ///////////////////FUNNY???///////////
 var Tewi;
@@ -239,7 +244,6 @@ const Game = {
                             Game.options.push(seleceted_tile);
                             //console.log(Game.options, tile);
                         }
-
                     }
                 })
                 intersects = 0;

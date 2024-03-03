@@ -9,5 +9,7 @@ export class Pawn extends Mesh {
         this.geometry = new CylinderGeometry(21, 21, 15);
         this.cord = position;
         this.isPawn = true;
+        this.castShadow = true;
+        this.receiveShadow = true;
     }
 }

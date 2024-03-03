@@ -9,5 +9,6 @@ export class Tile extends Mesh {
         this.geometry = new BoxGeometry(50, 20, 50);
         this.cord = position;
         this.isTile = true;
+        this.receiveShadow = true;
     }
 }
