@@ -18,43 +18,43 @@ let round_flag = 'white';
 let time_start = 99999999999999;
 let move_allowed = true;
 socketio.on('connection', (client) => {
-    client.on('game_start', (data)=>{
+    client.on('game_start', (data) => {
         ////START GRY
-        client.emit('game_status_change', {round_flag: round_flag, time_start: time_start})
+        client.emit('game_status_change', { round_flag: round_flag, time_start: time_start })
         ////GRA W TOKU
-        client.on('pawn_movement_data', (data)=>{
-            if(move_allowed){
-                round_flag = round_flag == 'white' ? 'black':'white';
+        client.on('pawn_movement_data', (data) => {
+            if (move_allowed) {
+                round_flag = round_flag == 'white' ? 'black' : 'white';
                 //console.log(data);
-                setTimeout(()=>{
+                setTimeout(() => {
                     time_start = Date.now()
-                    socketio.emit('game_status_change', {round_flag: round_flag, time_start: time_start})
+                    socketio.emit('game_status_change', { round_flag: round_flag, time_start: time_start })
                 }, 1250)
                 socketio.emit('pawn_movement_data', data)
             }
         })
-        let round_interval = setInterval(()=>{
+        let round_interval = setInterval(() => {
             let time_now = Date.now()
-            console.log(time_now-time_start);
-            if ((time_now-time_start) < 30000){
+            //sconsole.log(time_now - time_start);
+            if ((time_now - time_start) < 30000) {
                 move_allowed = true;
             } else {
                 time_start = Date.now()
-                console.log(move_allowed);
+                //console.log(move_allowed);
                 move_allowed = false;
-                round_flag = round_flag == 'white' ? 'black':'white';
+                round_flag = round_flag == 'white' ? 'black' : 'white';
                 time_start = Date.now()
-                socketio.emit('game_status_change', {round_flag: round_flag, time_start: time_start})
+                socketio.emit('game_status_change', { round_flag: round_flag, time_start: time_start })
                 move_allowed = true;
                 clearInterval(round_interval)
-            }   
-                
-        },2)
+            }
+
+        }, 2)
         /////////////////PAWN DEATH
-        client.on('pawn_death_data', (data)=>{
+        client.on('pawn_death_data', (data) => {
             socketio.emit('pawn_death_data', data)
         })
-})
+    })
 });
 
 app.post('/', (req, res) => {
