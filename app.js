@@ -5,18 +5,31 @@ const path = require('path')
 const http = require('http');
 const { Server } = require("socket.io");
 const server = http.createServer(app);
-const socketio = new Server(server);
+const socketio = new Server(server, { cors: { origin: '*' } });
 const bodyParser = require("body-parser");
 const { log } = require('console');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.text())
 
+app.all('/', function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    next();
+});
+
+app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    next();
+});
+
 ///TABLICA GRACZY!:
 let active_players = [];
 let round_flag = 'white';
 let time_start = 99999999999999;
 let move_allowed = true;
+
 socketio.on('connection', (client) => {
     client.on('game_start', (data) => {
         ////START GRY
@@ -56,6 +69,8 @@ socketio.on('connection', (client) => {
         })
     })
 });
+
+
 
 app.post('/', (req, res) => {
     let response = "error!";
